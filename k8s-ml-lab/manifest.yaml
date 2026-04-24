@@ -47,6 +47,12 @@ spec:
             secretKeyRef:
               name: ml-auth
               key: API_KEY
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
