@@ -1,0 +1,13 @@
+﻿1. The Environment Trap: 
+No, the output will NOT change immediately. Environment variables are injected into the container only when it starts. If you change the ConfigMap, the Pod must be restarted (e.g., using 'kubectl rollout restart deployment ml-deployment') for the application to see the new value.
+
+2. Security Audit: 
+To view the value, run: kubectl get secret ml-auth -o jsonpath='{.data.API_KEY}'
+The value is NOT encrypted; it is only Base64 encoded. Anyone with access to the cluster can easily decode it (e.g., using [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('YOUR_ENCODED_STRING')) in PowerShell).
+
+3. Scaling Logic: 
+(Write your observed time here, usually 2-3 minutes). 
+The 'Stabilization Window' is a setting that prevents the HPA from scaling up or down too rapidly (flapping). By default, it looks at metrics over a specific timeframe to ensure the load is consistent before making a scaling decision.
+
+4. Fault Tolerance: 
+When you delete a pod, Kubernetes immediately notices the 'Actual State' (0 pods) does not match your 'Desired State' (1 pod in the Deployment). It immediately creates a new pod to restore the balance. This is the core 'Self-Healing' nature of Kubernetes.
